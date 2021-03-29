@@ -1,7 +1,13 @@
 {
-  "name": "node-fanyi-demo",
-  "version": "1.0.0",
+  "name": "node-fanyi",
+  "version": "0.0.1",
   "main": "index.js",
+  "bin": {
+    "fy": "dist/cli.js"
+  },
+  "files": [
+    "dist/**/*.js"
+  ],
   "scripts": {
     "start": "ts-node-dev src/cli.ts"
   },

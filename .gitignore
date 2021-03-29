@@ -6,4 +6,5 @@
 
 yarn.lock
 
-/src/brave.ts
+/src/private.ts
+/dist/

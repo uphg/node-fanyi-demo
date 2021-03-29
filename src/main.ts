@@ -1,21 +1,26 @@
 import * as https from 'https';
 import * as querystring from 'querystring';
 import md5 = require('md5');
+import { appId, appSecret } from './private';
+import { errorMap } from './error-map';
 
-export const translate = (word) => {
+export const translate = (word: string) => {
 
-  const appid = '???'
-  const appSecret = '???'
-  const salt = Math.random()
-  const sign = md5(appid + word + salt + appSecret)
+  const salt = Math.random();
+  const sign = md5(appId + word + salt + appSecret );
+  let from, to;
+  if (/[a-zA-Z]/.test(word[0])) {
+    // 英译中
+    from = 'en';
+    to = 'zh';
+  } else {
+    // 中译英
+    from = 'zh';
+    to = 'en';
+  }
 
   const query: string = querystring.stringify({
-    q: word,
-    from: 'en',
-    to: 'zh',
-    appid: appid,
-    salt: salt,
-    sign: sign,
+    q: word, appid: appId, from, to, salt, sign,
   });
 
   const options = {
@@ -25,16 +30,35 @@ export const translate = (word) => {
     method: 'GET',
   };
 
-  const req = https.request(options, (res) => {
-    res.on('data', (d) => {
-      console.log('状态码:', res.statusCode);
-      console.log('请求头:', res.headers);
-      process.stdout.write(d);
+  const request = https.request(options, (response) => {
+    const chunks: Buffer[] = [];
+    response.on('data', (chunk) => {
+      chunks.push(chunk);
+    });
+    response.on('end', () => {
+      const string = Buffer.concat(chunks).toString();
+      type BaiduResult = {
+        error_code?: string;
+        error_msg?: string;
+        from: string;
+        to: string;
+        trans_result: { src: string; dst: string; }[]
+      }
+      const object: BaiduResult = JSON.parse(string);
+      if (object.error_code) {
+        console.error(errorMap[object.error_code] || object.error_msg);
+        process.exit(2);
+      } else {
+        object.trans_result.map(obj => {
+          console.log(obj.dst)
+        })
+        process.exit(0);
+      }
     });
   });
 
-  req.on('error', (e) => {
+  request.on('error', (e) => {
     console.error(e);
   });
-  req.end();
+  request.end();
 };
