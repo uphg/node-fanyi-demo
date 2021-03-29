@@ -1,7 +1,9 @@
-node_modules/
-jspm_packages/
+/node_modules/
+/jspm_packages/
 
-.vscode/
-.idea/
+/.vscode/
+/.idea/
 
 yarn.lock
+
+/src/brave.ts
