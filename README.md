@@ -11,5 +11,5 @@ yarn start
 打包（需要安装 TypeScript 依赖）
 
 ```shell script
-tst
+tsc
 ```
