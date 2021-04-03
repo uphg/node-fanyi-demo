@@ -7,7 +7,7 @@ import { errorMap } from './error-map';
 export const translate = (word: string) => {
 
   const salt = Math.random();
-  const sign = md5(appId + word + salt + appSecret );
+  const sign = md5(appId + word + salt + appSecret);
   let from, to;
   if (/[a-zA-Z]/.test(word[0])) {
     // 英译中
@@ -50,8 +50,8 @@ export const translate = (word: string) => {
         process.exit(2);
       } else {
         object.trans_result.map(obj => {
-          console.log(obj.dst)
-        })
+          console.log('- ' + obj.dst);
+        });
         process.exit(0);
       }
     });
